@@ -1,5 +1,14 @@
 # Currency converter API and CLI client
 
+## Run
+There are Docker containers in the project.
+If you want to create it and run following command:
+```
+docker-compose up --build -d
+
+```
+
+
 ## Examples
 
 ### CLI 
