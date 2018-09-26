@@ -1,12 +1,12 @@
 # Currency converter API and CLI client
-
+[![Build Status](https://travis-ci.org/ApaDoctor/currency_converter.svg?branch=master)](https://travis-ci.org/ApaDoctor/currency_converter)
 ## Run
 There are Docker containers in the project.
 If you want to create it and run following command:
 ```
 docker-compose up --build -d
-
 ```
+
 
 
 ## Examples
@@ -53,6 +53,7 @@ docker-compose up --build -d
     }
 }
 ```
+
 ### API
 ```
 GET /currency_converter?amount=0.9&input_currency=¥&output_currency=AUD HTTP/1.1

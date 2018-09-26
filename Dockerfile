@@ -14,6 +14,7 @@ RUN set -ex \
             libc-dev \
             musl-dev \
             linux-headers \
+            pytest \
             pcre-dev \
             postgresql-dev \
     && pyvenv /venv \
