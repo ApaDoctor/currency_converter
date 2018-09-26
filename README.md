@@ -1,5 +1,5 @@
 # Currency converter API and CLI client
-[![Build Status](https://travis-ci.org/ApaDoctor/currency_converter.svg?branch=master)](https://travis-ci.org/ApaDoctor/currency_converter)
+[![Build Status](https://travis-ci.org/ApaDoctor/currency_converter.svg?branch=master)](https://travis-ci.org/ApaDoctor/currency_converter) [![BCH compliance](https://bettercodehub.com/edge/badge/ApaDoctor/currency_converter?branch=master)](https://bettercodehub.com/)
 ## Run
 There are Docker containers in the project.
 If you want to create it and run following command:
