@@ -49,6 +49,7 @@ ENV UWSGI_VIRTUALENV=/venv UWSGI_WSGI_FILE=currency_converter/wsgi.py UWSGI_HTTP
 
 # Call collectstatic (customize the following line with the minimal environment variables needed for manage.py to run):
 RUN DATABASE_URL=none /venv/bin/python manage.py collectstatic --noinput
+RUN DATABASE_URL=none /venv/bin/python manage.py migrate --noinput
 
 #ENTRYPOINT ["/code/docker-entrypoint.sh"]
 
