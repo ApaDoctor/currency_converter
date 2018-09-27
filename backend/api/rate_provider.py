@@ -1,13 +1,14 @@
 import requests
 from currency_converter import settings
 
+
 class RateProvider:
     """
     Rate provider uses selected API to get actual exchange rates for all supported currencies
     """
     ACTIVE_PROVIDERS = ['ratesapi', ]
 
-    def __init__(self, provider='ratesapi'):
+    def __init__(self, provider=settings.EXCHANGE_RATE_PROVIDER):
         if provider not in RateProvider.ACTIVE_PROVIDERS:
             raise ValueError(
                 "Unknown provider. Possible are: {}".format(", ".join([x for x in RateProvider.ACTIVE_PROVIDERS])))

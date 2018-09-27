@@ -23,10 +23,16 @@ class Currency(models.Model):
 
     @classmethod
     def fill_data(cls):
+        """
+        Fills DATABASE with the currencies listed in SUPPORTED_CURRENCIES field in the settings.
+        Doesn't delete existing data. So it's up to you delete it or not.
+        """
+
         create_queue = []
+        current_currencies = [x.code for x in Currency.objects.all()]
         # Fill list with Currency objects
         for cur_code in settings.SUPPORTED_CURRENCIES:
-            if cur_code in CURRENCIES.keys():
+            if cur_code in CURRENCIES.keys() and cur_code not in current_currencies:
                 create_queue.append(Currency(**CURRENCIES[cur_code]))
 
         # Save all currencies together
@@ -46,6 +52,10 @@ class ExchangeRate(models.Model):
 
     @classmethod
     def update_rates(cls):
+        """
+        Updates rates with fresh data from provider selected in the settings EXCHANGE_RATE_PROVIDER
+        """
+
         # Its faster to get whole QuerySet and call get from it then call .get() each time
         currencies = Currency.objects.all()
 

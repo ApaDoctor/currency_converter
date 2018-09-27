@@ -1,4 +1,6 @@
 from django.test import TestCase
+
+from api.models import Currency, ExchangeRate
 from currency_converter import settings
 
 # Create your tests here.
@@ -26,9 +28,28 @@ class TestRatesProvider(TestCase):
         for x in RateProvider.ACTIVE_PROVIDERS:
             data = RateProvider(x).get_rates()
             self.assertIsInstance(data, dict)
-            for key,value in data.items():
+            for key, value in data.items():
                 self.assertTrue(isinstance(value, dict) or value is None)
                 self.assertIsInstance(key, str)
                 self.assertIn(key, settings.SUPPORTED_CURRENCIES.keys())
 
 
+class TestCurrency(TestCase):
+    def test_currency_fill_no_duplicates(self):
+        Currency.fill_data()
+        currency = len(Currency.objects.all())
+        Currency.fill_data()
+        currency_after = len(Currency.objects.all())
+
+        self.assertEqual(currency, currency_after)
+
+    def test_currency_fill(self):
+        Currency.objects.delete()
+        Currency.fill_data()
+        self.assertTrue(Currency.objects.exists())
+
+
+class TestExchangeRate(TestCase):
+    def test_fill_data(self):
+        ExchangeRate.update_rates()
+        self.assertTrue(ExchangeRate.objects.exists())
