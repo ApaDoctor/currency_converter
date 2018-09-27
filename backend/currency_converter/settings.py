@@ -185,3 +185,5 @@ SUPPORTED_CURRENCIES = {"AED": "United Arab Emirates Dirham", "AFN": "Afghan Afg
                         "XDR": "Special Drawing Rights", "XOF": "CFA Franc BCEAO", "XPF": "CFP Franc",
                         "YER": "Yemeni Rial", "ZAR": "South African Rand", "ZMK": "Zambian Kwacha (pre-2013)",
                         "ZMW": "Zambian Kwacha", "ZWL": "Zimbabwean Dollar"}
+
+EXCHANGE_RATE_PROVIDER = 'ratesapi'

@@ -17,14 +17,6 @@ This command create currencies if there are no them in database.
 And then it replaces all exchange rates with actual.
 
 
-## Documentation
-There are documentation available in the project:
-```
-/admin/doc/models/
-```
-You need to have account to access it.
-It can be created with command:
-
 ## Admin panel
 There is admin panel available in the project.
 To access admin panel you need to have superuser account.
@@ -40,6 +32,30 @@ You can access it with link in the admin or with the following link:
 /admin/doc/models/
 ```
 
+## Data update
+Exchange rates change very quick. So good currency converter should update rates
+At least once per day.
+
+Now there are two update providers in this project:
+- [RatesAPI](http://ratesapi.io)
+- [ExchangeRatesAPI](http://api.exchangeratesapi.io)
+
+They are free and have only 35 currencies with exchange rates.
+By default is used RatesAPI.
+You can change it in *currency_converter/settings.py*.
+```
+EXCHANGE_RATE_PROVIDER = 'ratesapi'
+```
+
+Also you can add your own exchange rate provider in these steps:
+1. Implement method for RateProvider class located in *api/rate_provider.py*
+   The name of the method must be protected(with underscore) _method_name.
+   It must take currency code for which it will give the rates.
+   Output is dict of rates.
+   Where keys are 3-character length currency codes.
+   And values are floats or integers with current exchange rates.
+2. Register the method in RateProvider.ACTIVE_PROVIDERS.
+   Put the name of the method without underscore.
 
 ### Examples
 
