@@ -135,13 +135,10 @@ class ExchangeRate(models.Model):
     def get_rate(cls, source, target):
         """
         Get exchange rates from one currency to another
-        :param source: 3-characters code of currency or :model:`api.Currency` object
-        :param target: 3-characters code of currency or :model:`api.Currency` object
+        :param source: :model:`api.Currency` object
+        :param target: :model:`api.Currency` object
         :return: exchange rate
         """
         cls._check_currency(source)
 
-        l = locals()
-        data = {x if isinstance(x, cls) else "{}__code".format(x): l[x] for x in ['source', 'target']}
-
-        return cls.objects.get(**data).rate
+        return cls.objects.get(source=source, target=target).rate
