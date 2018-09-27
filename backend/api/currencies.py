@@ -121,7 +121,7 @@ CURRENCIES = {
     },
     "CNY": {
         "name": "Chinese Yuan",
-        "symbol": "CN¥",
+        "symbol": "¥",
         "code": "CNY"
     },
     "COP": {
