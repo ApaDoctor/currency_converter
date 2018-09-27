@@ -1,5 +1,9 @@
 # Currency converter API and CLI client
 [![Build Status](https://travis-ci.org/ApaDoctor/currency_converter.svg?branch=master)](https://travis-ci.org/ApaDoctor/currency_converter) [![BCH compliance](https://bettercodehub.com/edge/badge/ApaDoctor/currency_converter?branch=master)](https://bettercodehub.com/)
+
+### Its better to use NoSQL database instead of postgres
+But i've used Postgres because it was in position requirements:)
+
 ## Run
 There are Docker containers in the project.
 If you want to create it and run following command:
@@ -11,18 +15,21 @@ docker-compose up --build -d
 
 To fill data in database you can use this command:
 ```
-python manage.py update_rates
+docker-compose exec app /vent/bin/python manage.py update_rates
 ```
 This command create currencies if there are no them in database.
 And then it replaces all exchange rates with actual.
 
+### Makefile
+There is makefile available in the project.
+So you can run project with make.
 
 ## Admin panel
 There is admin panel available in the project.
 To access admin panel you need to have superuser account.
 It can be created with the following command:
 ```
-python manage.py createsuperuser
+docker-compose exec app /venv/bin/python manage.py createsuperuser
 ```
 
 ### Documentation
