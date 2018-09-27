@@ -113,7 +113,7 @@ class ExchangeRate(models.Model):
         If not raise exception
         :param currency: code of currency
         """
-        if currency not in settings.SUPPORTED_CURRENCIES.keys():
+        if not (currency in settings.SUPPORTED_CURRENCIES.keys() or isinstance(currency, Currency)):
             raise ValueError("Unsupported currency")
 
     @classmethod

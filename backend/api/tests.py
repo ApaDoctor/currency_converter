@@ -6,6 +6,8 @@ from currency_converter import settings
 # Create your tests here.
 from api.rate_provider import RateProvider
 
+from django.test import Client
+
 
 class TestRatesProvider(TestCase):
     def test_appropriate_providers(self):
@@ -76,3 +78,54 @@ class TestExchangeRate(TestCase):
 
             self.assertTrue(len(currency) == 3, 'Currency code length is 3 characters')
             self.assertIn(currency, settings.SUPPORTED_CURRENCIES.keys(), 'Currency must be one of the supported')
+
+
+class TestConverter(TestCase):
+    def test_incorrect_input_currency(self):
+        c = Client()
+        r = c.get('/currency_converter/', {'input_currency': 'USDT', "amount": 1})
+        self.assertIsNotNone(r.json().get('error'))
+
+    def test_incorrect_method(self):
+        c = Client()
+        response = c.post('/currency_converter/', {'input_currency': "USD", "amount": 1})
+        self.assertTrue(response.status_code == 405)
+
+    def test_incorrect_output_currency(self):
+        c = Client()
+        r = c.get('/currency_converter/', {'input_currency': 'USD', "amount": 1, "output_currency": "USDT"})
+        self.assertIsNotNone(r.json().get('error'))
+
+    def test_same_output_input_currencies(self):
+        c = Client()
+        r = c.get('/currency_converter/', {'input_currency': 'USD', "amount": 1, "output_currency": "USD"})
+        self.assertIsNotNone(r.json().get('error'))
+
+    def test_amount(self):
+        c = Client()
+        x = -0.5
+        while x < 0:
+            r = c.get('/currency_converter/', {'input_currency': 'USD', "amount": x})
+            self.assertIsNotNone(r.json().get('error'))
+            x += 0.01
+
+        x = 0
+        while x < 10:
+            r = c.get('/currency_converter/', {'input_currency': 'USD', "amount": x})
+            self.assertIsNone(r.json().get('error'))
+            x+=0.5123348723462334534
+
+        r = c.get('/currency_converter/', {'input_currency': 'USD', "amount": +12312321})
+        self.assertIsNotNone(r.json().get('error'))
+
+        r = c.get('/currency_converter/', {'input_currency': 'USD', "amount": "asdasdasda"})
+        self.assertIsNotNone(r.json().get('error'))
+
+        r = c.get('/currency_converter/', {'input_currency': 'USD', "amount": "123123sad"})
+        self.assertIsNotNone(r.json().get('error'))
+
+        r = c.get('/currency_converter/', {'input_currency': 'USD', "amount": "1231231zsdsda123123"})
+        self.assertIsNotNone(r.json().get('error'))
+
+        r = c.get('/currency_converter/', {'input_currency': 'USD', "amount": "."})
+        self.assertIsNotNone(r.json().get('error'))
