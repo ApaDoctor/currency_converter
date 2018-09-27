@@ -44,7 +44,7 @@ class TestCurrency(TestCase):
         self.assertEqual(currency, currency_after)
 
     def test_currency_fill(self):
-        Currency.objects.delete()
+        Currency.objects.all.delete()
         Currency.fill_data()
         self.assertTrue(Currency.objects.exists())
 

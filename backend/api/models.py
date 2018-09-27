@@ -38,6 +38,9 @@ class Currency(models.Model):
         # Save all currencies together
         cls.objects.bulk_create(create_queue)
 
+    def parse_currency(self):
+        pass
+
 
 class ExchangeRate(models.Model):
     """
@@ -82,3 +85,36 @@ class ExchangeRate(models.Model):
 
         # And then create new
         ExchangeRate.objects.bulk_create(create_queue)
+
+    @staticmethod
+    def _check_currency(currency):
+        """
+        Check if selected currency is supported
+        If not raise exception
+        :param currency: code of currency
+        """
+        if currency not in settings.SUPPORTED_CURRENCIES.keys():
+            raise ValueError("Unsupported currency")
+
+    @classmethod
+    def get_rates(cls, source):
+        """
+        Get exchange rates for selected currency
+        :param source: 3-characters code of currency
+        :return: dict of exchange rates for selected currency
+        """
+        cls._check_currency(source)
+
+        return {x.target.code: x.rate for x in cls.objects.filter(source__code=source)}
+
+    @classmethod
+    def get_rate(cls, source, target):
+        """
+        Get exchange rates from one currency to another
+        :param source: 3-characters code of currency
+        :param target: 3-characters code of currency
+        :return: exchange rate
+        """
+        cls._check_currency(source)
+
+        return cls.objects.filter(source__code=source, target__code=target).rate
