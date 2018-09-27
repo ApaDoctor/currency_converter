@@ -9,9 +9,41 @@ docker-compose up --build -d
 
 
 
-## Examples
+To fill data in database you can use this command:
+```
+python manage.py update_rates
+```
+This command create currencies if there are no them in database.
+And then it replaces all exchange rates with actual.
 
-### CLI 
+
+## Documentation
+There are documentation available in the project:
+```
+/admin/doc/models/
+```
+You need to have account to access it.
+It can be created with command:
+
+## Admin panel
+There is admin panel available in the project.
+To access admin panel you need to have superuser account.
+It can be created with the following command:
+```
+python manage.py createsuperuser
+```
+
+### Documentation
+There is documentation available in the project.
+You can access it with link in the admin or with the following link:
+```
+/admin/doc/models/
+```
+
+
+### Examples
+
+#### CLI
 ```
 ./currency_converter.py --amount 100.0 --input_currency EUR --output_currency CZK
 {   
@@ -54,7 +86,7 @@ docker-compose up --build -d
 }
 ```
 
-### API
+#### API
 ```
 GET /currency_converter?amount=0.9&input_currency=¥&output_currency=AUD HTTP/1.1
 {   
