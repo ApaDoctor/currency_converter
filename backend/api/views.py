@@ -57,7 +57,7 @@ class CurrencyConverter(View):
 
         # try:
         if output_currency:
-            result = {output_currency: round(ExchangeRate.get_rate(input_currency, output_currency) * amount, 2)}
+            result = {output_currency.code: round(ExchangeRate.get_rate(input_currency, output_currency) * amount, 2)}
         else:
             result = {currency: round(rate * amount, 2) for currency, rate in
                       ExchangeRate.get_rates(input_currency).items()}

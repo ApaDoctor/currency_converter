@@ -138,6 +138,7 @@ class ExchangeRate(models.Model):
         """
         cls._check_currency(source)
 
-        data = {x if isinstance(x, cls) else "{}__code".format(x): locals()[x] for x in ['source', 'target']}
+        l = locals()
+        data = {x if isinstance(x, cls) else "{}__code".format(x): l[x] for x in ['source', 'target']}
 
-        return cls.objects.filter(**data).rate
+        return cls.objects.get(**data).rate
