@@ -40,6 +40,17 @@ class Currency(models.Model):
         cls.objects.bulk_create(create_queue)
 
     @classmethod
+    def correct_currencies(cls):
+        """
+        :return: list of correct values for currency parsers
+        """
+        correct_cur = set()
+        for x in Currency.objects.all():
+            correct_cur.add(x.code)
+            correct_cur.add(x.symbol)
+        return correct_cur
+
+    @classmethod
     def parse_currency(cls, source):
         """
         Method is created to get currency with currency symbol or currency code.
@@ -109,21 +120,24 @@ class ExchangeRate(models.Model):
     def get_rates(cls, source):
         """
         Get exchange rates for selected currency
-        :param source: 3-characters code of currency
+        :param source: 3-characters code of currency or :model:`api.Currency` object
         :return: dict of exchange rates for selected currency
         """
         cls._check_currency(source)
 
-        return {x.target.code: x.rate for x in cls.objects.filter(source__code=source)}
+        data = {'source': source} if isinstance(source, cls) else {"source__code": source}
+        return {x.target.code: x.rate for x in cls.objects.filter(**data)}
 
     @classmethod
     def get_rate(cls, source, target):
         """
         Get exchange rates from one currency to another
-        :param source: 3-characters code of currency
-        :param target: 3-characters code of currency
+        :param source: 3-characters code of currency or :model:`api.Currency` object
+        :param target: 3-characters code of currency or :model:`api.Currency` object
         :return: exchange rate
         """
         cls._check_currency(source)
 
-        return cls.objects.filter(source__code=source, target__code=target).rate
+        data = {x if isinstance(x, cls) else "{}__code".format(x): locals()[x] for x in ['source', 'target']}
+
+        return cls.objects.filter(**data).rate
