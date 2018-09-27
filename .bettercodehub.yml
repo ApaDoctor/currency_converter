@@ -3,3 +3,4 @@ languages:
 - python
 exclude:
 - /backend/currency_converter/settings.py
+- /backend/api/currencies.py
