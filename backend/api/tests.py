@@ -37,19 +37,42 @@ class TestRatesProvider(TestCase):
 class TestCurrency(TestCase):
     def test_currency_fill_no_duplicates(self):
         Currency.fill_data()
-        currency = len(Currency.objects.all())
+        currency = Currency.objects.all()
         Currency.fill_data()
-        currency_after = len(Currency.objects.all())
+        currency_after = Currency.objects.all()
 
-        self.assertEqual(currency, currency_after)
+        self.assertQuerysetEqual(currency, currency_after)
 
     def test_currency_fill(self):
-        Currency.objects.all.delete()
+        Currency.objects.all().delete()
         Currency.fill_data()
         self.assertTrue(Currency.objects.exists())
+
+    def test_parse_incorrect_symbol_currency(self):
+        def failure():
+            Currency.parse_currency("$$")
+
+        self.assertRaises(Currency.DoesNotExist, failure)
+
+    def test_parse_currency(self):
+        self.assertEqual(Currency.parse_currency('£'), Currency.parse_currency('GBP'))
+        self.assertEqual(Currency.parse_currency('¥'), Currency.parse_currency('CNY'))
+        self.assertEqual(Currency.parse_currency('€'), Currency.parse_currency('EUR'))
+
+    def part_multiple_result(self):
+        if len(Currency.objects.filter(code='$')) > 1:
+            self.assertRaises(Currency.MultipleObjectsReturned, Currency.parse_currency, '$')
 
 
 class TestExchangeRate(TestCase):
     def test_fill_data(self):
         ExchangeRate.update_rates()
-        self.assertTrue(ExchangeRate.objects.exists())
+
+    def test_get_rates(self):
+        data = ExchangeRate.get_rates('USD')
+        self.assertIsInstance(data, dict, 'Provider must return dict of currencies with rates')
+        for currency, rate in data.items():
+            self.assertTrue(isinstance(rate, float) or isinstance(rate, int), 'Rate must be integer or float')
+
+            self.assertTrue(len(currency) == 3, 'Currency code length is 3 characters')
+            self.assertIn(currency, settings.SUPPORTED_CURRENCIES.keys(), 'Currency must be one of the supported')

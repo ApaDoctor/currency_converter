@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 from api.currencies import CURRENCIES
 from api.rate_provider import RateProvider
@@ -38,8 +39,16 @@ class Currency(models.Model):
         # Save all currencies together
         cls.objects.bulk_create(create_queue)
 
-    def parse_currency(self):
-        pass
+    @classmethod
+    def parse_currency(cls, source):
+        """
+        Method is created to get currency with currency symbol or currency code.
+        Currency.MultipleReturned and Currency.DoesntExist exceptions are not excepted.
+        There can be few currencies with the same symbol.
+        :param source: currency 3-chars code or currency symbol
+        :return: Currency object
+        """
+        return cls.objects.get(Q(symbol=source) | Q(code=source))
 
 
 class ExchangeRate(models.Model):
