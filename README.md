@@ -57,7 +57,10 @@ Also you can add your own exchange rate provider in these steps:
 2. Register the method in RateProvider.ACTIVE_PROVIDERS.
    Put the name of the method without underscore.
 
-### Examples
+### Actualize Rates
+To actualize rates on production - use cron and choose your update frequency
+
+## Examples
 
 #### CLI
 ```

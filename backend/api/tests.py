@@ -60,8 +60,6 @@ class TestCurrency(TestCase):
         self.assertRaises(Currency.DoesNotExist, failure)
 
     def test_parse_currency(self):
-        print(Currency.objects.all())
-
         self.assertEqual(Currency.parse_currency('£'), Currency.parse_currency('GBP'))
         self.assertEqual(Currency.parse_currency('¥'), Currency.parse_currency('CNY'))
         self.assertEqual(Currency.parse_currency('€'), Currency.parse_currency('EUR'))
@@ -125,8 +123,7 @@ class TestConverter(TestCase):
         while x < 10:
             r = c.get('/currency_converter', {'input_currency': 'USD', "amount": x})
             self.assertIsNone(r.json().get('error'))
-            x+=0.5123348723462334534
-
+            x += 0.5123348723462334534
 
         r = c.get('/currency_converter', {'input_currency': 'USD', "amount": "asdasdasda"})
         self.assertIsNotNone(r.json().get('error'))
