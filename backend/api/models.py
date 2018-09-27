@@ -70,6 +70,9 @@ class ExchangeRate(models.Model):
     target = models.ForeignKey(Currency, on_delete=models.PROTECT, related_name='exchange_target')
     rate = models.FloatField()
 
+    class Meta:
+        unique_together = ['source', 'target']
+
     def __str__(self):
         return "{} -> {}".format(self.source, self.target)
 
