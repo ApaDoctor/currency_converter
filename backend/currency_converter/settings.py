@@ -75,24 +75,24 @@ WSGI_APPLICATION = 'currency_converter.wsgi.application'
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'cc_dsk',
+#         'USER': 'cc_dsk',
+#         'PASSWORD': '4g5h453dfs32sd32',
+#         'HOST': 'db',
+#         'PORT': '5432',
+#     }
+# }
+#
+# if 'TRAVIS' in os.environ:
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cc_dsk',
-        'USER': 'cc_dsk',
-        'PASSWORD': '4g5h453dfs32sd32',
-        'HOST': 'db',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase',
     }
 }
-
-if 'TRAVIS' in os.environ:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'mydatabase',
-        }
-    }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
