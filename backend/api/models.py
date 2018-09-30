@@ -59,8 +59,16 @@ class Currency(models.Model):
         :param source: currency 3-chars code or currency symbol
         :return: Currency object
         """
-        return cls.objects.get(Q(symbol=source) | Q(code=source))
+        try:
+            if source is None:
+                return None
+            else:
+                return cls.objects.get(Q(symbol=source) | Q(code=source))
 
+        except Currency.MultipleObjectsReturned:
+            raise ValueError('Selected symbol is used to define multiple currencies. Use currency code instead')
+        except Currency.DoesNotExist:
+            raise ValueError("Incorrect currency")
 
 class ExchangeRate(models.Model):
     """
@@ -142,3 +150,13 @@ class ExchangeRate(models.Model):
         cls._check_currency(source)
 
         return cls.objects.get(source=source, target=target).rate
+
+    @classmethod
+    def convert_currency(cls, input_currency, output_currency, amount):
+        if output_currency:
+            result = {output_currency.code: round(cls.get_rate(input_currency, output_currency) * amount, 2)}
+        else:
+            result = {currency: round(rate * amount, 2) for currency, rate in
+                      cls.get_rates(input_currency).items()}
+
+        return result

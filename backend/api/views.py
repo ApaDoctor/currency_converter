@@ -5,6 +5,17 @@ from django.shortcuts import render
 from django.views import View
 
 from api.models import Currency, ExchangeRate
+from webargs import fields
+
+from api.parser import use_args
+from currency_converter import settings
+
+in_currencies = lambda x: x in settings.SUPPORTED_CURRENCIES.keys()
+converter_args = {
+    "input_currency": fields.Str(required=True, validate=in_currencies),
+    "amount": fields.Float(required=True, validate=lambda x: x > 0),
+    "output_currency": fields.Str(validate=in_currencies)
+}
 
 
 class CurrencyConverter(View):
@@ -15,55 +26,21 @@ class CurrencyConverter(View):
         input_currency (required) - currency symbol or currency code
     """
 
-    def get(self, request, *args, **kwargs):
-        amount = request.GET.get('amount')
-        input_currency = request.GET.get('input_currency')
-        output_currency = request.GET.get('output_currency')
-        message = False
-
-        # Check for errors
-        errors = [
-            [amount is None or input_currency is None, "Required arguments are missing"
-                                                       " - input_currency or output_currency"],
-            [re.match(r"^\+?\d*?\.?\d+?$", amount) is None,
-             "Incorrect amount value. It must be positive integer or float value"],
-            [input_currency == output_currency, "Input and output currencies are the same"]
-        ]
-
-        for x in errors:
-            if x[0]:
-                message = x[1]
-                break
-
-        if message:
-            return JsonResponse({'error': message})
-
+    @use_args(converter_args)
+    def get(self, request, args):
+        amount = args["amount"]
         try:
+            print(args["input_currency"], args.get("output_currency", None))
+            # print(Currency.objects.get(code=args["input_currency"]))
             # Parse currency
-            input_currency = Currency.parse_currency(input_currency)
-            output_currency = Currency.parse_currency(output_currency) \
-                if output_currency else None
+            input_currency = Currency.parse_currency(args["input_currency"])
+            output_currency = Currency.parse_currency(args.get("output_currency", None))
 
 
-        except Currency.MultipleObjectsReturned:
-            message = 'Selected symbol is used to define multiple currencies. Use currency code instead'
-        except Currency.DoesNotExist:
-            message = "Incorrect currency"
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, json_dumps_params={'indent': 2})
 
-        if message:
-            return JsonResponse({'error': message})
-
-        amount = float(amount)
-
-        # try:
-        if output_currency:
-            result = {output_currency.code: round(ExchangeRate.get_rate(input_currency, output_currency) * amount, 2)}
-        else:
-            result = {currency: round(rate * amount, 2) for currency, rate in
-                      ExchangeRate.get_rates(input_currency).items()}
-
-        # except:
-        #     return JsonResponse({'error': 'Unknown error occurred. Please contact support'})
+        result = ExchangeRate.convert_currency(input_currency, output_currency, amount)
 
         return JsonResponse({
             'input': {

@@ -6,4 +6,4 @@ docutils
 pytest==3.6.0
 pytest-django==3.2.1
 requests
-webargs
+webargs==4.1.0
