@@ -28,15 +28,14 @@ class CurrencyConverter(View):
 
     @use_args(converter_args)
     def get(self, request, args):
-        amount = args["amount"]
+        amount = round(args["amount"], 2)
         try:
-            print(args["input_currency"], args.get("output_currency", None))
-            # print(Currency.objects.get(code=args["input_currency"]))
             # Parse currency
             input_currency = Currency.parse_currency(args["input_currency"])
             output_currency = Currency.parse_currency(args.get("output_currency", None))
 
-
+            if input_currency == output_currency:
+                raise Exception("The input currency can't be equal to the output one")
         except Exception as e:
             return JsonResponse({"error": str(e)}, json_dumps_params={'indent': 2})
 
