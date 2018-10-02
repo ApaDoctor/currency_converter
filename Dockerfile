@@ -34,6 +34,7 @@ RUN set -ex \
 RUN mkdir /code/
 WORKDIR /code/
 COPY backend /code
+#COPY client /code/client
 ADD requirements.txt /code/
 
 

@@ -91,20 +91,19 @@ WSGI_APPLICATION = 'currency_converter.wsgi.application'
 if env('TRAVIS_CI', default=False):
     DATABASES = {
         'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'mydatabase',
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'cc_dsk',
             'USER': 'cc_dsk',
             'PASSWORD': '4g5h453dfs32sd32',
             'HOST': 'db',
             'PORT': '5432',
-        }
-    }
-
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'mydatabase',
         }
     }
 

@@ -3,19 +3,13 @@ dist: trusty
 
 services:
 - docker
-- postgresql
 
 env:
-  - TRAVIS_CI=True
+- TRAVIS_CI=True
 
 install:
 - docker-compose pull
 - docker-compose build
 
-before_script:
-- psql -c "CREATE DATABASE test_db_app;" -U postgres
-- psql -c "CREATE USER db_user WITH PASSWORD 'db_pass';" -U postgres
-
 script:
-- docker-compose up --build -d
-- docker-compose exec app /venv/bin/python -m pytest
+- docker-compose run -e TRAVIS_CI=True --no-deps app /venv/bin/python -m pytest
