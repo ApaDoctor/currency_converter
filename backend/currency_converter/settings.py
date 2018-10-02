@@ -88,28 +88,26 @@ WSGI_APPLICATION = 'currency_converter.wsgi.application'
 #         'PORT': '5432',
 #     }
 # }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'cc_dsk',
-        'USER': 'cc_dsk'
-        if not env('TRAVIS_CI', default=False) else 'postgres',
-        'PASSWORD': 'db_pass',
-        'HOST': 'db' if env('PYTHONBUFFERED', default=False) else 'localhost',
-        'PORT': 5432,
+if env('TRAVIS_CI', default=False):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'cc_dsk',
+            'USER': 'cc_dsk',
+            'PASSWORD': '4g5h453dfs32sd32',
+            'HOST': 'db',
+            'PORT': '5432',
+        }
     }
-}
 
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'mydatabase',
+        }
+    }
 
-#
-# if 'TRAVIS' in os.environ:
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': 'mydatabase',
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
