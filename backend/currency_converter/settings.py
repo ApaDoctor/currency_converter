@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
+import environ
+
+env = environ.Env()
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -85,14 +88,28 @@ WSGI_APPLICATION = 'currency_converter.wsgi.application'
 #         'PORT': '5432',
 #     }
 # }
-#
-# if 'TRAVIS' in os.environ:
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'cc_dsk',
+        'USER': 'cc_dsk'
+        if not env('TRAVIS_CI', default=False) else 'postgres',
+        'PASSWORD': 'db_pass',
+        'HOST': 'db' if env('PYTHONBUFFERED', default=False) else 'localhost',
+        'PORT': 5432,
     }
 }
+
+
+#
+# if 'TRAVIS' in os.environ:
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': 'mydatabase',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators

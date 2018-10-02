@@ -3,6 +3,7 @@ dist: trusty
 
 services:
 - docker
+- postgresql
 
 env:
   - TRAVIS_CI=True
@@ -10,6 +11,10 @@ env:
 install:
 - docker-compose pull
 - docker-compose build
+
+before_script:
+- psql -c "CREATE DATABASE test_db_app;" -U postgres
+- psql -c "CREATE USER db_user WITH PASSWORD 'db_pass';" -U postgres
 
 script:
 - docker-compose up --build -d
