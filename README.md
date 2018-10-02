@@ -11,7 +11,10 @@ If you want to create it and run following command:
 docker-compose up --build -d
 ```
 
-
+To prepare database you need to apply migrations with:
+```
+docker-compose exec app /vent/bin/python manage.py migrate
+```
 
 To fill data in database you can use this command:
 ```
