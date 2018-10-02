@@ -77,7 +77,8 @@ class TestExchangeRate(TestCase):
         ExchangeRate.update_rates()
 
     def test_get_rates(self):
-        data = ExchangeRate.get_rates('USD')
+        Currency.fill_data()
+        data = ExchangeRate.get_rates(Currency.parse_currency('USD'))
         self.assertIsInstance(data, dict, 'Provider must return dict of currencies with rates')
         for currency, rate in data.items():
             self.assertTrue(isinstance(rate, float) or isinstance(rate, int), 'Rate must be integer or float')

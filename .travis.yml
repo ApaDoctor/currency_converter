@@ -4,6 +4,9 @@ dist: trusty
 services:
 - docker
 
+env:
+  - TRAVIS_CI=True
+
 install:
 - docker-compose pull
 - docker-compose build

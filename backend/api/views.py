@@ -1,20 +1,26 @@
-import re
-
 from django.http import JsonResponse
-from django.shortcuts import render
 from django.views import View
+from marshmallow import fields, ValidationError
 
+from api.logic import convert_currency
 from api.models import Currency, ExchangeRate
-from webargs import fields
-
 from api.parser import use_args
 from currency_converter import settings
 
-in_currencies = lambda x: x in settings.SUPPORTED_CURRENCIES.keys()
+
+def validate_currency(x): return x in settings.SUPPORTED_CURRENCIES.keys()
+
+
+def deserialize_currency(x):
+    if not validate_currency(x):
+        raise ValidationError('Incorrect currency')
+    return Currency.parse_currency(x)
+
+
 converter_args = {
-    "input_currency": fields.Str(required=True, validate=in_currencies),
+    "input_currency": fields.Function(required=True, deserialize=deserialize_currency),
     "amount": fields.Float(required=True, validate=lambda x: x > 0),
-    "output_currency": fields.Str(validate=in_currencies)
+    "output_currency": fields.Function(deserialize=deserialize_currency)
 }
 
 
@@ -29,17 +35,16 @@ class CurrencyConverter(View):
     @use_args(converter_args)
     def get(self, request, args):
         amount = round(args["amount"], 2)
-        try:
-            # Parse currency
-            input_currency = Currency.parse_currency(args["input_currency"])
-            output_currency = Currency.parse_currency(args.get("output_currency", None))
 
-            if input_currency == output_currency:
-                raise Exception("The input currency can't be equal to the output one")
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, json_dumps_params={'indent': 2})
+        input_currency = args["input_currency"]
+        output_currency = args.get("output_currency", None)
 
-        result = ExchangeRate.convert_currency(input_currency, output_currency, amount)
+        if input_currency == output_currency:
+            return JsonResponse(
+                {"error": "The input currency can't be equal to the output one"}
+            )
+
+        result = convert_currency(ExchangeRate.get_rates(input_currency, output_currency), amount)
 
         return JsonResponse({
             'input': {

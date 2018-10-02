@@ -128,35 +128,21 @@ class ExchangeRate(models.Model):
             raise ValueError("Unsupported currency")
 
     @classmethod
-    def get_rates(cls, source):
+    def get_rates(cls, source, target=None):
         """
         Get exchange rates for selected currency
-        :param source: 3-characters code of currency or :model:`api.Currency` object
+        :param source: :model:`api.Currency` object
+        :param target: positional - :model:`api.Currency` object
         :return: dict of exchange rates for selected currency
         """
         cls._check_currency(source)
 
-        data = {'source': source} if isinstance(source, cls) else {"source__code": source}
-        return {x.target.code: x.rate for x in cls.objects.filter(**data)}
-
-    @classmethod
-    def get_rate(cls, source, target):
-        """
-        Get exchange rates from one currency to another
-        :param source: :model:`api.Currency` object
-        :param target: :model:`api.Currency` object
-        :return: exchange rate
-        """
-        cls._check_currency(source)
-
-        return cls.objects.get(source=source, target=target).rate
-
-    @classmethod
-    def convert_currency(cls, input_currency, output_currency, amount):
-        if output_currency:
-            result = {output_currency.code: round(cls.get_rate(input_currency, output_currency) * amount, 2)}
+        if target is None:
+            result = {x.target.code: x.rate for x in cls.objects.filter(source=source)}
         else:
-            result = {currency: round(rate * amount, 2) for currency, rate in
-                      cls.get_rates(input_currency).items()}
+            result = {target.code: cls.objects.get(source=source, target=target).rate}
 
         return result
+
+
+
