@@ -66,8 +66,23 @@ Also you can add your own exchange rate provider in these steps:
 
 ### Actualize Rates
 To actualize rates on production - use cron and choose your update frequency
+```
+docker-compose exec app /vent/bin/python manage.py update_rates
+```
 
 ## Examples
+If there is some error API returns json object with error key:
+```
+/currency_converter?amount=100&input_currency=$$
+```
+Output:
+{"error": {"input_currency": ["Incorrect currency"]}}
+
+In case if currency code is used with more then one currencies there will be error:
+```
+{"error": {"input_currency": ["Selected symbol is used to define multiple currencies. Use currency code instead"]}}
+```
+
 
 #### CLI
 ```

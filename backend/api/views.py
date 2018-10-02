@@ -6,15 +6,21 @@ from api.logic import convert_currency
 from api.models import Currency, ExchangeRate
 from api.parser import use_args
 from currency_converter import settings
+from api.currencies import CURRENCIES
 
 
-def validate_currency(x): return x in settings.SUPPORTED_CURRENCIES.keys()
+def validate_currency(x):
+    return x in settings.SUPPORTED_CURRENCIES.keys() or \
+           x in [CURRENCIES[x]["symbol"] for x in settings.SUPPORTED_CURRENCIES.keys()]
 
 
 def deserialize_currency(x):
     if not validate_currency(x):
         raise ValidationError('Incorrect currency')
-    return Currency.parse_currency(x)
+    try:
+        return Currency.parse_currency(x)
+    except Exception as e:
+        raise ValidationError(str(e))
 
 
 converter_args = {
